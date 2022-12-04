@@ -1,5 +1,6 @@
 import csv
 import random
+from flask import Flask
 
 listLocation = 0
 
@@ -42,7 +43,7 @@ def handValue(person):
     v = 0
     for x in range(len(person.hand)):
         v += person.hand[x].cValue
-    print(v)
+    return v
 
 def deal(person):
     global listLocation
@@ -79,11 +80,16 @@ def main():
     hPlayer = player([],500)
     cDealer = dealer([])
     players = [cDealer,hPlayer]
-    while hPlayer.bank != 0:
+    wannaStop = 0
+    while hPlayer.bank != 0 or wannaStop:
         bet = 0
         print('You currently have '+ str(hPlayer.bank) + ' dollars.')
         print('How much would you like to bet?')
         bet = int(input())
+        if bet > hPlayer.bank:
+            print('You don\'t have that amount to bet, please pick again.')
+            print('How much would you like to bet?')
+            bet = int(input())
         hPlayer.bank -= bet
         print('You have bet ' + str(bet) + ' dollars, good luck.')
         for x in range(len(players)):
@@ -96,15 +102,21 @@ def main():
         if checkNatural(hPlayer) and not checkNatural(cDealer):
             print('That\'s a natural! You win the hand.')
             payout(hPlayer,1.5*bet)
+            hPlayer.hand = []
+            cDealer.hand = []
             continue
         elif checkNatural(cDealer) and checkNatural(hPlayer):
             print('You and the dealer both have naturals.')
             print('You may take your chips back, and start the next hand.')
-            player.hand += bet
+            hPlayer.bank += bet
+            hPlayer.hand = []
+            cDealer.hand = []
             continue
         elif checkNatural(cDealer):
             print('Looks like the dealer has a natural, sorry.')
             print('You lose your bet, and the next hand shall be dealt.')
+            hPlayer.hand = []
+            cDealer.hand = []
             continue
 
         print('That gives you a total of ' + str(handValue(hPlayer)))
@@ -112,6 +124,9 @@ def main():
 
         if hiLow(hPlayer):
             print('Looks like you have an ace in hand. \nYour ace can be high or low, 1 or 11. \n ')
+
+        hPlayer.hand = []
+        cDealer.hand = []
 
     
     #if handValue(hPlayer)
