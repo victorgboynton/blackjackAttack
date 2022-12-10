@@ -1,6 +1,6 @@
 import csv
 import random
-from flask import Flask
+#from flask import Flask
 
 listLocation = 0
 
@@ -38,6 +38,9 @@ class dealer:
 def handPrint(person):
     for x in range(len(person.hand)):
         print(person.hand[x].name)
+    print('That gives a total of: ' + str(handValue(person)))
+    if hiLow:
+        print('Or, with ace high, '+ str(handValue(person)+10))
 
 def handValue(person):
     v = 0
@@ -53,7 +56,6 @@ def deal(person):
 def hiLow(person):
     for x in range(len(person.hand)):
         if person.hand[x].cValue == 1:
-            print('ace')
             return 1
         else:
             return 0
@@ -64,8 +66,20 @@ def checkNatural(person):
     else:
         return 0
 
-def hitOrStand():
-    pass
+def clearHand(player,dealer):
+    player.hand = []
+    dealer.hand = []
+
+#def hitOrStand(person):
+    #print('Hit or stand?')
+    #choice = str(input())
+    #if choice == 'Hit' or 'hit':
+    #    deal(person)
+    #elif choice == 'stand' or 'Stand':
+        
+
+
+
 def splitCard():
     pass
 
@@ -92,7 +106,7 @@ def main():
             bet = int(input())
         hPlayer.bank -= bet
         print('You have bet ' + str(bet) + ' dollars, good luck.')
-        for x in range(len(players)):
+        for x in range(0,2):
             deal(hPlayer)
             deal(cDealer)
         print('Let\'s take a look at your hand: ')
@@ -102,31 +116,38 @@ def main():
         if checkNatural(hPlayer) and not checkNatural(cDealer):
             print('That\'s a natural! You win the hand.')
             payout(hPlayer,1.5*bet)
-            hPlayer.hand = []
-            cDealer.hand = []
+            clearHand(hPlayer,cDealer)
             continue
         elif checkNatural(cDealer) and checkNatural(hPlayer):
             print('You and the dealer both have naturals.')
             print('You may take your chips back, and start the next hand.')
             hPlayer.bank += bet
-            hPlayer.hand = []
-            cDealer.hand = []
+            clearHand(hPlayer,cDealer)
             continue
         elif checkNatural(cDealer):
             print('Looks like the dealer has a natural, sorry.')
             print('You lose your bet, and the next hand shall be dealt.')
-            hPlayer.hand = []
-            cDealer.hand = []
+            clearHand(hPlayer,cDealer)
             continue
-
-        print('That gives you a total of ' + str(handValue(hPlayer)))
         
 
-        if hiLow(hPlayer):
-            print('Looks like you have an ace in hand. \nYour ace can be high or low, 1 or 11. \n ')
 
-        hPlayer.hand = []
-        cDealer.hand = []
+        #if handValue(hPlayer) > 21:
+        #    print('That\'s a bust, you lose your bet.')
+        #    continue
+        stand = ''
+        while handValue(hPlayer) <= 21 or stand != 'stand' or stand != 'Stand':
+            print("Hit or stand?")
+            stand = str(input())
+            if handValue(cDealer) < 17:
+                deal(cDealer)
+                print('Dealers new card is: ' + str(cDealer.hand[len(cDealer.hand)-1]))
+
+        
+
+            
+
+        clearHand(hPlayer,cDealer)
 
     
     #if handValue(hPlayer)
