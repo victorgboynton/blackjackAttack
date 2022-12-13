@@ -39,7 +39,7 @@ def handPrint(person):
     for x in range(len(person.hand)):
         print(person.hand[x].name)
     print('That gives a total of: ' + str(handValue(person)))
-    if hiLow:
+    if hiLow(person):
         print('Or, with ace high, '+ str(handValue(person)+10))
 
 def handValue(person):
@@ -70,14 +70,6 @@ def clearHand(player,dealer):
     player.hand = []
     dealer.hand = []
 
-#def hitOrStand(person):
-    #print('Hit or stand?')
-    #choice = str(input())
-    #if choice == 'Hit' or 'hit':
-    #    deal(person)
-    #elif choice == 'stand' or 'Stand':
-        
-
 
 
 def splitCard():
@@ -94,8 +86,7 @@ def main():
     hPlayer = player([],500)
     cDealer = dealer([])
     players = [cDealer,hPlayer]
-    wannaStop = 0
-    while hPlayer.bank != 0 or wannaStop:
+    while hPlayer.bank != 0:
         bet = 0
         print('You currently have '+ str(hPlayer.bank) + ' dollars.')
         print('How much would you like to bet?')
@@ -104,7 +95,6 @@ def main():
             print('You don\'t have that amount to bet, please pick again.')
             print('How much would you like to bet?')
             bet = int(input())
-        hPlayer.bank -= bet
         print('You have bet ' + str(bet) + ' dollars, good luck.')
         for x in range(0,2):
             deal(hPlayer)
@@ -121,33 +111,93 @@ def main():
         elif checkNatural(cDealer) and checkNatural(hPlayer):
             print('You and the dealer both have naturals.')
             print('You may take your chips back, and start the next hand.')
-            hPlayer.bank += bet
+            payout(hPlayer,bet)
             clearHand(hPlayer,cDealer)
             continue
         elif checkNatural(cDealer):
             print('Looks like the dealer has a natural, sorry.')
             print('You lose your bet, and the next hand shall be dealt.')
+            payout(hPlayer,-(bet))
             clearHand(hPlayer,cDealer)
             continue
         
 
 
-        #if handValue(hPlayer) > 21:
-        #    print('That\'s a bust, you lose your bet.')
-        #    continue
         stand = ''
-        while handValue(hPlayer) <= 21 or stand != 'stand' or stand != 'Stand':
+        while handValue(hPlayer) <= 21 and stand != 'stand' and stand != 'Stand':
             print("Hit or stand?")
             stand = str(input())
+            if stand == 'stand' or stand =='Stand':
+                print('You chose to stand')
+            elif stand == 'hit' or stand=='Hit':
+                deal(hPlayer)
+                print('Your new hand:')
+                handPrint(hPlayer)
+            else:
+                print('Please type hit or stand')
+                continue
             if handValue(cDealer) < 17:
                 deal(cDealer)
-                print('Dealers new card is: ' + str(cDealer.hand[len(cDealer.hand)-1]))
+                print('Dealers new card is: ' + str(cDealer.hand[len(cDealer.hand)-1].name))
+            else:
+                print("The dealer stands at " + str(handValue(cDealer)))
 
         
+        pScore = 0
+        cScore = 0
+        if hiLow(hPlayer):
+            if handValue(hPlayer)+10 <= 21:
+                pScore = handValue(hPlayer) + 10
+            else:
+                pScore = handValue(hPlayer)
+        else:
+            pScore = handValue(hPlayer)
 
-            
+        if hiLow(cDealer):
+            if handValue(cDealer)+10 <= 21:
+                cScore = handValue(cDealer) + 10
+            else:
+                cScore = handValue(cDealer)
+        else:
+            cScore = handValue(cDealer)
+
+        if pScore > 21:
+            print('You bust')
+            payout(hPlayer,-(bet))
+        elif cScore > 21:
+            print('The dealer has busted.')
+            payout(hPlayer,bet)
+        elif cScore >= pScore:
+            print('The dealer has won the hand.')
+            payout(hPlayer,-(bet))
+        elif pScore > cScore:
+            print('You\'ve won the hand!')
+            payout(hPlayer,bet)
 
         clearHand(hPlayer,cDealer)
+        print('Would you like to continue? Y/N?')
+        choice = str(input())
+        while choice:
+            if choice == 'Yes' or choice == 'Y' or choice == 'y' or choice == 'yes': break
+            elif choice =='no' or choice =='n' or choice =='No' or choice=='N':
+                if hPlayer.bank-500 <= 0:
+                    print('You\'ve lost '+str(abs(hPlayer.bank-500))+' dollars. Better luck next time.')
+                    exit()
+                else:
+                    print('You\'ve won '+str(hPlayer.bank-500)+' dollars. Good job!')
+                    exit()
+            else: print("Please select either Y or N")
+            continue
+
+
+
+        clearHand(hPlayer,cDealer)
+        if hPlayer.bank ==0:
+            print('You ran out of money, goodbye.')
+            exit()
+        else:
+            continue
+
 
     
     #if handValue(hPlayer)
