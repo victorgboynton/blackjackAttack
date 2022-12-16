@@ -101,6 +101,8 @@ def main():
             deal(cDealer)
         print('Let\'s take a look at your hand: ')
         handPrint(hPlayer)
+        print('And the dealer\'s hand:')
+        handPrint(cDealer)
 
         # Goes through the options for a natural, then manages bet as required.
         if checkNatural(hPlayer) and not checkNatural(cDealer):
@@ -139,6 +141,7 @@ def main():
             if handValue(cDealer) < 17:
                 deal(cDealer)
                 print('Dealers new card is: ' + str(cDealer.hand[len(cDealer.hand)-1].name))
+                print("For a value of:" + str(handValue(cDealer)))
             else:
                 print("The dealer stands at " + str(handValue(cDealer)))
 
