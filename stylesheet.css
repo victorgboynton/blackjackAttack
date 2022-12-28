@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
     margin: 0px;
 }
@@ -8,13 +9,23 @@ nav{
     background-color: rgb(34, 34, 34);
     position:fixed;
     width: 100%;
+=======
+nav{
+    padding:0px;
+    margin:0px;
+    overflow: hidden;
+    background-color: rgb(34, 34, 34);
+>>>>>>> 51eab6f3b0fcefc7715297316e94476bb47fd538
 }
 
 ul{
     list-style-type:none;
+<<<<<<< HEAD
     margin: 0px;
     padding: 0px;
     
+=======
+>>>>>>> 51eab6f3b0fcefc7715297316e94476bb47fd538
 }
 
 li{
@@ -24,11 +35,16 @@ li{
 li a{
     display:block;
     color:white;
+<<<<<<< HEAD
     text-align: justify;
     padding:12px;
     font-size: 25px;
     text-decoration: none;
 
+=======
+    text-align: center;
+    padding:12px;
+>>>>>>> 51eab6f3b0fcefc7715297316e94476bb47fd538
 }
 
 li a:hover{
